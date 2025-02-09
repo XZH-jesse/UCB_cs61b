@@ -113,6 +113,19 @@ public class Model extends Observable {
         // TODO: Modify this.board (and perhaps this.score) to account
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
+        if (side != Side.NORTH) {
+            board.setViewingPerspective(side);
+            changed = true;
+        }
+        for (int c = 0; c < board.size(); c += 1) {
+            if (remove_col_only(c)) {
+                changed = true;
+            }
+        }
+        if (side != Side.NORTH) {
+            board.setViewingPerspective(Side.NORTH);
+        }
+
 
         checkGameOver();
         if (changed) {
@@ -120,6 +133,54 @@ public class Model extends Observable {
         }
         return changed;
     }
+
+    //
+    private Boolean remove_col_only(int c) {
+        boolean changed = false;
+        int i = board.size() - 1;
+        while (i > 0) {
+            int j = i - 1;
+            //如果i这个位置是null，那么需要从下面找一个数来填充这个位置，j=i-1 ～ 0
+            if (board.tile(c, i) == null) {
+                while (board.tile(c, j) == null && j > 0) {
+                    j -= 1;
+                }
+                if (j >= 0 && board.tile(c, j) != null) {
+                    Tile t = board.tile(c, j);
+                    board.move(c, i, t);
+                    changed = true;
+                } else
+                    return changed;
+            }
+            //否则尝试找一个数能和i这个位置的数合并
+            else {
+                while (board.tile(c, j) == null && j > 0) {
+                    j -= 1;
+                }
+                if (j >= 0 && board.tile(c, j) != null) {
+                    Tile t = board.tile(c, j);
+                    //如果此时两数相等，合并
+                    if (board.tile(c, j).value() == board.tile(c, i).value()) {
+                        board.move(c, i, t);
+                        changed = true;
+                        score += board.tile(c, i).value();
+                    }
+                    //两数不等，那么j移动到i的下面的位置
+                    else {
+                        board.move(c, i - 1, t);
+                        changed = true;
+                    }
+                }
+                //无论是合并之后，还是没有合并，i这个位置都不能再合并数据了
+                i -= 1;
+            }
+        }
+        return changed;
+    }
+
+
+    //
+
 
     /** Checks if the game is over and sets the gameOver variable
      *  appropriately.
@@ -138,7 +199,15 @@ public class Model extends Observable {
      * */
     public static boolean emptySpaceExists(Board b) {
         // TODO: Fill in this function.
-        return false;
+        boolean has_empty = false;
+        for (int i = 0; i < b.size(); i++) {
+            for (int j = 0; j < b.size(); j++) {
+                if (b.tile(i, j) == null) {
+                    has_empty = true;
+                }
+            }
+        }
+        return has_empty;
     }
 
     /**
@@ -148,6 +217,16 @@ public class Model extends Observable {
      */
     public static boolean maxTileExists(Board b) {
         // TODO: Fill in this function.
+        for (int i = 0; i < b.size(); i++) {
+            for (int j = 0; j < b.size(); j++) {
+                if (b.tile(i, j) == null) {
+                    continue;
+                }
+                if (b.tile(i, j).value() == MAX_PIECE) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -159,6 +238,33 @@ public class Model extends Observable {
      */
     public static boolean atLeastOneMoveExists(Board b) {
         // TODO: Fill in this function.
+        if (emptySpaceExists(b)) {
+            return true;
+        }
+        for (int i = 0; i < b.size(); i++) {
+            for (int j = 0; j < b.size() - 1; j++) {
+                int value_first;
+                int value_second;
+                if (b.tile(i, j) != null) {
+                    value_first = b.tile(i, j).value();
+                    if (b.tile(i, j + 1) != null) {
+                        value_second = b.tile(i, j + 1).value();
+                        if (value_first == value_second) {
+                            return true;
+                        }
+                    }
+                }
+                if (b.tile(j, i) != null) {
+                    value_first = b.tile(j, i).value();
+                    if (b.tile(j + 1, i) != null) {
+                        value_second = b.tile(j + 1, i).value();
+                        if (value_first == value_second) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
         return false;
     }
 
