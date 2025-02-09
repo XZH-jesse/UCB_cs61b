@@ -140,39 +140,31 @@ public class Model extends Observable {
         int i = board.size() - 1;
         while (i > 0) {
             int j = i - 1;
-            //如果i这个位置是null，那么需要从下面找一个数来填充这个位置，j=i-1 ～ 0
-            if (board.tile(c, i) == null) {
-                while (board.tile(c, j) == null && j > 0) {
-                    j -= 1;
-                }
-                if (j >= 0 && board.tile(c, j) != null) {
-                    Tile t = board.tile(c, j);
-                    board.move(c, i, t);
-                    changed = true;
-                } else
-                    return changed;
+            // 找到第一个非空的 tile（j >= 0）
+            while (j >= 0 && board.tile(c, j) == null) {
+                j--;
             }
-            //否则尝试找一个数能和i这个位置的数合并
-            else {
-                while (board.tile(c, j) == null && j > 0) {
-                    j -= 1;
+            if (j < 0) {
+                return changed; // 没有可移动的 tile，直接结束循环
+            }
+            Tile t = board.tile(c, j);
+            if (board.tile(c, i) == null) {
+                // 移动 tile 到空位
+                board.move(c, i, t);
+                changed = true;
+            } else if (t.value() == board.tile(c, i).value()) {
+                // 合并相同值的 tile
+                board.move(c, i, t);
+                changed = true;
+                score += board.tile(c, i).value();
+                i--; // 合并后需递减 i，处理下一个位置
+            } else {
+                // 无法合并，将 tile 移动到 i-1 的位置
+                if (j != i - 1) { // 避免重复移动
+                    board.move(c, i - 1, t);
+                    changed = true;
                 }
-                if (j >= 0 && board.tile(c, j) != null) {
-                    Tile t = board.tile(c, j);
-                    //如果此时两数相等，合并
-                    if (board.tile(c, j).value() == board.tile(c, i).value()) {
-                        board.move(c, i, t);
-                        changed = true;
-                        score += board.tile(c, i).value();
-                    }
-                    //两数不等，那么j移动到i的下面的位置
-                    else {
-                        board.move(c, i - 1, t);
-                        changed = true;
-                    }
-                }
-                //无论是合并之后，还是没有合并，i这个位置都不能再合并数据了
-                i -= 1;
+                i--; // 无论是否移动，i 递减以处理下一个位置
             }
         }
         return changed;
