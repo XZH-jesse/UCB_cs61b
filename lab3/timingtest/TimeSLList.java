@@ -27,18 +27,22 @@ public class TimeSLList {
         AList<Double> times = new AList<>();
         AList<Integer> opCounts = new AList<>();
 
+        int m = 10000;
         for (int n = 1000; n <= 128000; n *= 2) {
             SLList<Integer> testSLList = new SLList<>();
-
-            Stopwatch sw = new Stopwatch();
             for (int i = 0; i < n; i += 1) {
                 testSLList.addLast(i);
+            }
+
+            Stopwatch sw = new Stopwatch();
+            for (int i = 0; i < m; i += 1) {
+                testSLList.getLast();
             }
             double timeInSeconds = sw.elapsedTime();
 
             Ns.addLast(n);
             times.addLast(timeInSeconds);
-            opCounts.addLast(n);
+            opCounts.addLast(m);
         }
         printTimingTable(Ns, times, opCounts);
     }
