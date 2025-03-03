@@ -85,6 +85,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T>{
             T item = get(firstIndex);
             items[firstIndex] = null;
             nextFirst = firstIndex;
+            this.size -= 1;
 
             return item;
         }
@@ -100,6 +101,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T>{
             T item = get(lastIndex);
             items[lastIndex] = null;
             nextLast = lastIndex;
+            this.size -= 1;
 
             return item;
         }
