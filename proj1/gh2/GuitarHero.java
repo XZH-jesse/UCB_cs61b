@@ -8,14 +8,14 @@ import edu.princeton.cs.algs4.StdDraw;
 public class GuitarHero {
     public static final double CONCERT_A = 440.0;
     public static final double CONCERT_C = CONCERT_A * Math.pow(2, 3.0 / 12.0);
-    public static final String keyboard = "q2we4r5ty7u8i9op-[=zxdcfvgbnjmk,.;/' ";
+    public static final String KEYBOARD = "q2we4r5ty7u8i9op-[=zxdcfvgbnjmk,.;/' ";
 
     public static void main(String[] args) {
         /* create two guitar strings, for concert A and C */
-        GuitarString[] string = new GuitarString[keyboard.length()];
+        GuitarString[] string = new GuitarString[KEYBOARD.length()];
 
-        for (int i = 0; i < keyboard.length(); i += 1) {
-            string[i] = new GuitarString(CONCERT_A * Math.pow(2, (i - 24) / 12));
+        for (int i = 0; i < KEYBOARD.length(); i += 1) {
+            string[i] = new GuitarString(CONCERT_C);
         }
 
         while (true) {
@@ -23,8 +23,8 @@ public class GuitarHero {
             /* check if the user has typed a key; if so, process it */
             if (StdDraw.hasNextKeyTyped()) {
                 char key = StdDraw.nextKeyTyped();
-                if (keyboard.indexOf(key) != -1) {
-                    string[keyboard.indexOf(key)].pluck();
+                if (KEYBOARD.indexOf(key) != -1) {
+                    string[KEYBOARD.indexOf(key)].pluck();
                 }
             }
 

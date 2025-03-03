@@ -29,7 +29,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         }
         items = newArrayDeque;
         nextFirst = items.length - 1;
-        nextLast= this.size;
+        nextLast = this.size;
     }
 
     @Override
@@ -129,7 +129,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         return new ArrayDequeIterator();
     }
 
-    private class ArrayDequeIterator implements Iterator<T>{
+    private class ArrayDequeIterator implements Iterator<T> {
         private int wizPos;
 
         private ArrayDequeIterator() {
