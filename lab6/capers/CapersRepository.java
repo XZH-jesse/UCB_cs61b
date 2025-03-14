@@ -2,9 +2,10 @@ package capers;
 
 import java.io.File;
 import static capers.Utils.*;
+import java.io.IOException;
 
-/** A repository for Capers 
- * @author TODO
+/** A repository for Capers
+ * @author XZH
  * The structure of a Capers Repository is as follows:
  *
  * .capers/ -- top level folder for all persistent data in your lab12 folder
@@ -18,7 +19,7 @@ public class CapersRepository {
     static final File CWD = new File(System.getProperty("user.dir"));
 
     /** Main metadata folder. */
-    static final File CAPERS_FOLDER = null; // TODO Hint: look at the `join`
+    static final File CAPERS_FOLDER = join(CWD, ".capers"); // TODO Hint: look at the `join`
                                             //      function in Utils
 
     /**
@@ -32,6 +33,14 @@ public class CapersRepository {
      */
     public static void setupPersistence() {
         // TODO
+        // 创建主目录和 dogs 子目录
+        if (!CAPERS_FOLDER.exists()) {
+            CAPERS_FOLDER.mkdir();
+        }
+        File dogFolder = join(CAPERS_FOLDER, "dogs");
+        if (!dogFolder.exists()) {
+            dogFolder.mkdir();
+        }
     }
 
     /**
@@ -41,6 +50,14 @@ public class CapersRepository {
      */
     public static void writeStory(String text) {
         // TODO
+        File storyFile = join(CAPERS_FOLDER, "story");
+        String content = "";
+        if (storyFile.exists()) {
+            content = readContentsAsString(storyFile);
+        }
+        content += text + "\n";
+        writeContents(storyFile, content);
+        System.out.println(content);
     }
 
     /**
@@ -50,6 +67,9 @@ public class CapersRepository {
      */
     public static void makeDog(String name, String breed, int age) {
         // TODO
+        Dog dog = new Dog(name, breed, age);
+        dog.saveDog();
+        System.out.println(dog);
     }
 
     /**
@@ -60,5 +80,8 @@ public class CapersRepository {
      */
     public static void celebrateBirthday(String name) {
         // TODO
+        Dog dog = Dog.fromFile(name);
+        dog.haveBirthday();
+        dog.saveDog();
     }
 }
